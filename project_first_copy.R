@@ -1,10 +1,10 @@
 library(dplyr)
 library(stringr)
-
+library(ggplot2)
 
 df1 <- read.csv("data2.csv",as.is = c(1:5),na.strings = '')
-#View(df1)
-?read.csv
+
+
 df2 <- df1[-1]
 glimpse(df2)
 summary(df2)
@@ -20,7 +20,7 @@ vec1 <- c("age","gender","location","profession","income_per_month","covid_affec
 ncol(df2)
 colnames(df2) <- vec1
 glimpse(df2)
-df2$age <- as.numeric(df2$age)
+df2$age <- as.integer(df2$age)
 table(df2$age)
 
 
@@ -47,7 +47,65 @@ df3$profession1 <- df3$profession
 table(df3$profession1)
 
 
+summary(df3$age)
 df3$profession1[which(str_detect(df3$profession1,c("student|nursing|studying")))] = "student"
-df3$profession1[which(str_detect(df3$profession1,c("govt|goverment|employee|service|government")))] = "Employee"
+df3$profession1[which(str_detect(df3$profession1,c("home|house|retired|retd|graduate|no")))] = "unemployed"
+df3$profession1[which(str_detect(df3$profession1,c("student|unemployed"),negate = T))] = "employed" 
 table(df3$profession1)
 
+df3 <- df3[complete.cases(df3$age),]
+
+age_gr1 <- 17:25
+age_gr2 <- 26:35
+age_gr3 <- 36:45
+age_gr4 <- 46:55
+age_gr5 <- 56:65
+
+group_div <- function(x){
+  if(x %in% age_gr1){
+    paste0("17-25")
+  }else if(x %in% age_gr2){
+    paste0("26-35")
+  }else if(x %in% age_gr3){
+    paste0("36-45")
+  }else if(x %in% age_gr4){
+    paste0("46-55")
+  }else if(is.na(x)){
+    print(NA)
+  }else{
+    "56-65"
+  }    
+}
+df3$age_grp <- sapply(df3$age,group_div)
+
+            
+            
+            
+            
+##################Q1
+#age-wise effect of lockdown financially
+
+age_count <- df3 %>% 
+  group_by(age_grp) %>% 
+  summarise(count= n())
+
+age_count
+
+df_age <- df3 %>% 
+  group_by(age_grp,lockdown_effect_finance) %>% 
+  summarise(count = n())
+df_age
+
+tab <- data.frame(table(df_age$age_grp))
+tab
+
+df_age$total <- rep(age_count$count,times=tab$Freq)
+df_age$freqden <- df_age$count/df_age$total
+names(df3)
+df3$lockdown_effect_finance
+
+
+ggplot(data=df_age ,aes(x= age_grp,y= freqden ,fill= lockdown_effect_finance ))+
+  geom_bar(position="dodge",stat="identity",width =0.5)+coord_polar()
+  labs(y="Count",x="Age group",title="Effect of Lockdown Financially",
+       fill= "Effect of lockdown Financially", subtitle = "Age wise",fill="Frequency density")
