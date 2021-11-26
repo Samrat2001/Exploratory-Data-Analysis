@@ -42,23 +42,6 @@ levels(df3$covid_affected1) <- c(0,0,NA,1)
 df3$covid_affected1
 
 
-# ####lockdown effect......"Slightly affected" -> 2  "Not affected" -> 0,
-# ####........"Moderately affected"->4 ,"Very much affected"->" 1,"Severely affected" ->3 
-# for(i in 8:10){
-#   levels(df3[,i]) <- c(2,0,4,1,3)
-# }
-# glimpse(df3)
-# ####traveling frequency ..... rarely -> 0 , frequently -> 1
-# for(i in 14:16){
-#   levels(df3[,i]) <- c(0,1)
-# }
-# unique(df2[,8])
-# ### focus on issues ....... "Moderate" -> 1 , "Very less" -> 0 ,"Very much" -> 2
-# for(i in 20:22){
-#   levels(df3[,i]) <- c(1,0,2)
-# }
-# glimpse(df3)
-
 df3$profession1 <- df3$profession
 
 table(df3$profession1)
