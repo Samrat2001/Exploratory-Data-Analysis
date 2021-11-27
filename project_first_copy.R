@@ -162,3 +162,62 @@ ggplot(data=df_fina ,aes(x= income_per_month,y= freqden ,fill= profession_change
   geom_bar(position="dodge",stat="identity",width =0.5)+
   labs(y="count",x="Income Group",title="change of profession",
        fill= "Change of Profession", subtitle = "income group wise",fill="Frequency density")
+          
+          
+          
+  
+##############################################################
+#change in work life in different age groups
+
+
+df_fin3 <- subset(df3,profession1 != "student",select = c("income_per_month","covid_effect_on_work"))
+
+igrp_count <- df_fin3 %>% 
+  group_by(income_per_month) %>% 
+  summarise(count= n())
+
+
+df_finan <- df_fin3 %>% 
+  group_by(income_per_month,covid_effect_on_work) %>% 
+  summarise(count = n())
+
+tab2 <- data.frame(table(df_finan$income_per_month))
+
+df_finan$total <- rep(igrp_count$count,times=tab2$Freq)
+df_finan$freqden <- df_finan$count/df_finan$total
+
+ggplot(data=df_finan ,aes(x= income_per_month,y= freqden ,fill= as.factor(covid_effect_on_work) ))+
+  geom_bar(position="dodge",stat="identity",width =0.5)+
+  labs(y="count",x="Income Group",title="change in worklife",
+       fill= "Change in worklife\n(not affected to very affected)", subtitle = "income group wise",fill="Frequency density")
+
+###########################################################
+#focus of people in different income groups after lockdown
+
+
+df_fin4 <- subset(df3,profession1 != "student",select = c("income_per_month","focus_on_finance"))
+
+igrp_count <- df_fin4 %>% 
+  group_by(income_per_month) %>% 
+  summarise(count= n())
+
+df_fin_focus <- df_fin4 %>% 
+  group_by(income_per_month,focus_on_finance) %>% 
+  summarise(count = n())
+
+tab2 <- data.frame(table(df_fin_focus$income_per_month))
+
+
+df_fin_focus$total <- rep(igrp_count$count,times=tab2$Freq)
+df_fin_focus$freqden <- df_fin_focus$count/df_fin_focus$total
+
+ggplot(data=df_fin_focus ,aes(x= income_per_month,y= freqden ,fill= focus_on_finance ))+
+  geom_bar(position="dodge",stat="identity",width =0.5)+
+  labs(y="count",x="Income Group",title="Focus on Finance after lockdown",
+       fill= "Focus on Finance", subtitle = "income group wise",fill="Frequency density")
+
+
+          
+          
+          
+          
