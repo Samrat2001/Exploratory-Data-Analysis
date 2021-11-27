@@ -78,10 +78,10 @@ group_div <- function(x){
 }
 df3$age_grp <- sapply(df3$age,group_div)
 
-            
-            
-            
-            
+
+
+
+
 ##################Q1
 #age-wise effect of lockdown financially
 
@@ -107,5 +107,58 @@ df3$lockdown_effect_finance
 
 ggplot(data=df_age ,aes(x= age_grp,y= freqden ,fill= lockdown_effect_finance ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+coord_polar()
-  labs(y="Count",x="Age group",title="Effect of Lockdown Financially",
-       fill= "Effect of lockdown Financially", subtitle = "Age wise",fill="Frequency density")
+labs(y="Count",x="Age group",title="Effect of Lockdown Financially",
+     fill= "Effect of lockdown Financially", subtitle = "Age wise",fill="Frequency density")
+
+
+#####################################
+#Income group wise effect of lock down financially
+
+df_fin1 <- subset(df3,profession1 != "student",select = c("income_per_month","lockdown_effect_finance"))
+
+igrp_count <- df_fin1 %>% 
+  group_by(income_per_month) %>% 
+  summarise(count= n())
+
+
+df_fin <- df_fin1 %>% 
+  group_by(income_per_month,lockdown_effect_finance) %>% 
+  summarise(count = n())
+
+tab2 <- data.frame(table(df_fin$income_per_month))
+
+
+df_fin$total <- rep(igrp_count$count,times=tab2$Freq)
+df_fin$freqden <- df_fin$count/df_fin$total
+
+ggplot(data=df_fin ,aes(x= income_per_month,y= freqden ,fill= lockdown_effect_finance ))+
+  geom_bar(position="dodge",stat="identity",width =0.5)+
+  labs(y="count",x="Income Group",title="Effect of Lockdown Financially",
+       fill= "Effect of lockdown Financially", subtitle = "income group wise",fill="Frequency density")
+
+
+#####################################################
+#Change of profession in every income group
+
+
+df_fin2 <- subset(df3,profession1 != "student",select = c("income_per_month","profession_change"))
+
+igrp_count <- df_fin2 %>% 
+  group_by(income_per_month) %>% 
+  summarise(count= n())
+
+
+df_fina <- df_fin2 %>% 
+  group_by(income_per_month,profession_change) %>% 
+  summarise(count = n())
+
+tab2 <- data.frame(table(df_fina$income_per_month))
+
+
+df_fina$total <- rep(igrp_count$count,times=tab2$Freq)
+df_fina$freqden <- df_fina$count/df_fina$total
+
+ggplot(data=df_fina ,aes(x= income_per_month,y= freqden ,fill= profession_change ))+
+  geom_bar(position="dodge",stat="identity",width =0.5)+
+  labs(y="count",x="Income Group",title="change of profession",
+       fill= "Change of Profession", subtitle = "income group wise",fill="Frequency density")
