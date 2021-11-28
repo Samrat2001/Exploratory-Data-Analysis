@@ -244,3 +244,31 @@ ggplot(data=df_covid1 ,aes(x= comorbidity,y= freqden ,fill= lockdown_effect_phys
   labs(y="count",x="Comorbidity",title="Effect of Covid on Physical Health",
        fill= "Effect of Covid on Physical Health", subtitle = "Covid Affected population")          
           
+##################################################################
+#people infected with covid vs change of profession
+
+df_covidp <- subset(df3,select = c("covid_affected","profession_change"))
+df_covidp <- df_covidp[complete.cases(df_covidp),]
+
+
+infected_count <- df_covidp %>% 
+  group_by(covid_affected) %>% 
+  summarise(count= n())
+
+
+df_covid2 <- df_covidp %>% 
+  group_by(covid_affected,profession_change) %>% 
+  summarise(count = n())
+
+
+tab2 <- data.frame(table(df_covid2$covid_affected))
+
+df_covid2$total <- rep(infected_count$count,times = tab2$Freq)
+df_covid2$freqden <- df_covid2$count/df_covid2$total
+
+
+ggplot(data=df_covid2 ,aes(x= covid_affected,y= freqden ,fill= profession_change ))+
+  geom_bar(position="dodge",stat="identity",width =0.5)+
+  labs(y="count",x="covid infection",title="Effect of Covid on profession",
+       fill= "change of profession")+
+  theme(axis.text.x = element_text(angle = 90))
