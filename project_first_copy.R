@@ -429,3 +429,125 @@ ggplot(Vaccination_precautions_taken) +
   scale_y_continuous(labels = scales::percent_format())+
   theme(axis.text.x = element_text(angle = 90))
           
+###########################################################################################################################
+
+##Travel for emergency,work, vacation vs age
+age_travel <- select(df2, age, traveling_freq_work, traveling_freq_emergency, traveling_freq_vacation)
+age_travel
+
+age_travel$age <- cut(age_travel$age,5)
+levels(age_travel$age) <- c("(17,27]", "(27,36]", "(36,46]", "(46, 55]", "(55,65]")
+
+age_travel <- age_travel[!is.na(age_travel$age),]
+
+##Travel for work vs age
+age_travel_work <- age_travel %>% group_by(age, traveling_freq_work) %>% summarise(Age_wise_work_travel = table(traveling_freq_work))
+age_travel_work
+
+ggplot(age_travel_work)+
+  geom_bar(aes(x = age, y = Age_wise_work_travel, fill = traveling_freq_work), stat = "Identity", position = "fill")+
+  scale_y_continuous(labels = scales::percent_format())+
+  labs(x = "Age groups", y = "% of people traveling for work", title = "People traveling for work Vs. Age group")
+
+##Travel emergency vs age
+age_travel_emergency <- age_travel %>% group_by(age, traveling_freq_emergency) %>% summarise(Age_wise_emergency_travel = table(traveling_freq_emergency))
+age_travel_emergency
+
+ggplot(age_travel_emergency)+
+  geom_bar(aes(x = age, y = Age_wise_emergency_travel, fill = traveling_freq_emergency), stat = "Identity", position = "fill")+
+  scale_y_continuous(labels = scales::percent_format())+
+  labs(x = "Age groups", y = "% of people traveling for emergency", title = "People traveling for emergency Vs. Age group")
+
+##Travel vacation vs age 
+age_travel_vacation <- age_travel %>% group_by(age, traveling_freq_vacation) %>% summarise(Age_wise_vacation_travel = table(traveling_freq_vacation))
+age_travel_vacation
+
+age_travel_vacation$percentage <- c("28.57%", "71.42%", "19.04%", "80.95%", "18.75%", "81.25%", "28.89%", "71.11%", "26.67%", "73.33%")
+
+ggplot(age_travel_vacation)+
+  geom_bar(aes(x = age, y = Age_wise_vacation_travel, fill = traveling_freq_vacation), stat = "Identity", position = "fill")+
+  scale_y_continuous(labels = scales::percent_format())+
+  labs(x = "Age groups", y = "% of people traveling for vacation", title = "People traveling for vacation Vs. Age group")
+  #geom_text(aes(x = age, y = Age_wise_vacation_travel, fill = traveling_freq_vacation), label = age_travel_vacation$percentage, size = 4, position = position_stack(vjust = 1.1))
+
+####################################################################################
+
+##Travel for emergency,work, vacation vs income
+income_travel <- select(df2, income_per_month, traveling_freq_work, traveling_freq_emergency, traveling_freq_vacation)
+income_travel
+
+##Travel for work vs income_per_month
+income_travel_work <- income_travel %>% group_by(income_per_month, traveling_freq_work) %>% summarise(income_wise_work_travel = table(traveling_freq_work))
+income_travel_work
+
+ggplot(income_travel_work)+
+  geom_bar(aes(x = income_per_month, y = income_wise_work_travel, fill = traveling_freq_work), stat = "Identity", position = "fill")+
+  scale_y_continuous(labels = scales::percent_format())+
+  labs(x = "income groups", y = "% of people traveling for work", title = "People traveling for work Vs. different income group")
+
+##Travel emergency vs income_per_month
+income_travel_emergency <- income_travel %>% group_by(income_per_month, traveling_freq_emergency) %>% summarise(income_wise_emergency_travel = table(traveling_freq_emergency))
+income_travel_emergency
+
+ggplot(income_travel_emergency)+
+  geom_bar(aes(x = income_per_month, y = income_wise_emergency_travel, fill = traveling_freq_emergency), stat = "Identity", position = "fill")+
+  scale_y_continuous(labels = scales::percent_format())+
+  labs(x = "income groups", y = "% of people traveling for emergency", title = "People traveling for emergency Vs. different income group")
+
+##Travel vacation vs income_per_month
+income_travel_vacation <- income_travel %>% group_by(income_per_month, traveling_freq_vacation) %>% summarise(income_wise_vacation_travel = table(traveling_freq_vacation))
+income_travel_vacation
+
+ggplot(income_travel_vacation)+
+  geom_bar(aes(x = income_per_month, y = income_wise_vacation_travel, fill = traveling_freq_vacation), stat = "Identity", position = "fill")+
+  scale_y_continuous(labels = scales::percent_format())+
+  labs(x = "Income groups", y = "% of people traveling for vacation", title = "People traveling for vacation Vs. different income group")
+
+
+#####################################################################################################
+
+##change of profession with mentally and finance focus
+change_profession_mentally_finance_focus <- select(df2, profession_change, focus_on_mental_health, focus_on_finance)
+change_profession_mentally_finance_focus
+
+##change of profession and- finance focus
+change_profession_finance_focus <- change_profession_mentally_finance_focus %>% group_by(profession_change, focus_on_finance) %>% summarise(count = table(focus_on_finance))
+change_profession_finance_focus
+
+ggplot(change_profession_finance_focus)+
+  geom_bar(aes(x = profession_change, y = count, fill = focus_on_finance), stat = "identity", position = "fill")+
+  scale_y_continuous(labels = scales::percent_format())+
+  labs(x = "Profession change", y = "% of people focussing on finance with or without profession change", title = "People who changed their profession or not vs. focus on finance")
+
+##change of profession and mentally focus
+change_profession_mental_focus <- change_profession_mentally_finance_focus %>% group_by(profession_change, focus_on_mental_health) %>% summarise(count = table(focus_on_mental_health))
+change_profession_mental_focus
+
+ggplot(change_profession_mental_focus)+
+  geom_bar(aes(x = profession_change, y = count, fill = focus_on_mental_health), stat = "identity", position = "fill")+
+  scale_y_continuous(labels = scales::percent_format())+
+  labs(x = "Profession change", y = "% of people focussing on mental health with or without profession change", title = "People who changed their profession or not vs. focus on mental health")
+
+#################################################################################################################
+
+## covid affected and precautions taken
+covid_affected_precautions <- df2 %>% group_by(covid_affected, covid_precautions) %>% summarise(Count_of_precautions_taken = table(covid_precautions))
+covid_affected_precautions
+
+ggplot(covid_affected_precautions)+
+  geom_bar(aes(x = covid_affected, y = Count_of_precautions_taken, fill = covid_precautions), stat = "identity", position = "fill")+
+  scale_y_continuous(labels = scales::percent_format())+
+  labs(x = "Covid affected or not", y = "Covid Precautions taken", title = "Covid affected vs precautions taken")+
+  theme(axis.text.x = element_text(angle = 90))
+
+###################################################################################################################################
+
+##Exercise duration and precautions taken
+Exercise_duration_precautions <- df2 %>% group_by(exercise_freq, covid_precautions) %>% summarise(count = table(covid_precautions))
+Exercise_duration_precautions
+
+ggplot(Exercise_duration_precautions)+
+  geom_bar(aes(x = exercise_freq, y = count, fill = covid_precautions), stat = "identity", position = "fill")+
+  scale_y_continuous(labels = scales::percent_format())+
+  labs(x = "Frequency of exercise", y = "Covid Precautions taken", title = "Covid affected vs precautions taken")+
+  theme(axis.text.x = element_text(angle = 90))
