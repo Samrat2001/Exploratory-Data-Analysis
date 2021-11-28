@@ -217,7 +217,30 @@ ggplot(data=df_fin_focus ,aes(x= income_per_month,y= freqden ,fill= focus_on_fin
        fill= "Focus on Finance", subtitle = "income group wise",fill="Frequency density")
 
 
-          
-          
-          
+############################################################
+#people who has co morbidity how their physical health is affected
+
+                
+
+df_covid <- subset(df3,covid_affected1 == 1 , select = c(comorbidity,lockdown_effect_physically))
+df_covid <- df_covid[complete.cases(df_covid),]
+
+
+comorb_count <- df_covid %>% 
+  group_by(comorbidity) %>% 
+  summarise(count= n())
+
+df_covid1 <- df_covid %>% 
+  group_by(comorbidity,lockdown_effect_physically) %>% 
+  summarise(count = n())
+
+tab2 <- data.frame(table(df_covid1$comorbidity))
+
+df_covid1$total <- rep(comorb_count$count,times = c(4,2))
+df_covid1$freqden <- df_covid1$count/df_covid1$total
+
+ggplot(data=df_covid1 ,aes(x= comorbidity,y= freqden ,fill= lockdown_effect_physically ))+
+  geom_bar(position="dodge",stat="identity",width =0.5)+
+  labs(y="count",x="Comorbidity",title="Effect of Covid on Physical Health",
+       fill= "Effect of Covid on Physical Health", subtitle = "Covid Affected population")          
           
