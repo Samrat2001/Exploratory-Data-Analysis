@@ -244,7 +244,7 @@ ggplot(data=df_covid1 ,aes(x= comorbidity,y= freqden ,fill= lockdown_effect_phys
   labs(y="count",x="Comorbidity",title="Effect of Covid on Physical Health",
        fill= "Effect of Covid on Physical Health", subtitle = "Covid Affected population")          
           
-##New change by kamal
+
 ##################################################################
 #people infected with covid vs change of profession
 
@@ -276,6 +276,8 @@ ggplot(data=df_covid2 ,aes(x= covid_affected,y= freqden ,fill= profession_change
 
           
 ###############################################################################
+
+##Lockdown effect on different age group
 lckd$age <- cut(lckd$age,5)
 levels(lckd$age) <- c("(17,27]", "(27,36]", "(36,46]", "(46, 55]", "(55,65]")
 
@@ -308,32 +310,25 @@ ggplot(I1_) +
   theme(axis.text.x = element_text(angle = 90))
 
 ################################################################################
-table(df2$profession)
-
-Pf1 <- select(df2, profession, lockdown_effect_finance, lockdown_effect_physically, lockdown_effect_mentally)
-
-Pf1_ <- Pf1 %>% group_by(profession, lockdown_effect_mentally) %>% summarise(count = table(lockdown_effect_mentally))
-Pf1_
-
-ggplot(Pf1_) +
-  geom_bar(aes(x = profession, y = count, fill = lockdown_effect_mentally), stat = "Identity", position = "dodge")
 
 ################################################################################
+          
+## focus of people on different factors after covid age wise
 focus_area <- select(df2, age, focus_on_physical_health, focus_on_mental_health, focus_on_finance)
 focus_area$age <- cut(focus_area$age,5)
 levels(focus_area$age) <- c("(17,27]", "(27,36]", "(36,46]", "(46, 55]", "(55,65]")
 
 focus_area <- focus_area[!is.na(focus_area$age),]
 
+##Focus physical health
 focus_physical_health <- focus_area %>% group_by(age, focus_on_physical_health) %>% summarise(count = table(focus_on_physical_health))
 focus_physical_health
-
-percent_phy <- 
 
 ggplot(focus_physical_health) +
   geom_bar(aes(x = age, y = count, fill = focus_on_physical_health), stat = "Identity", position = "fill") +
   scale_y_continuous(labels = scales::percent_format())
 
+##Focus Mental health
 focus_mental_health <- focus_area %>% group_by(age, focus_on_mental_health) %>% summarise(count = table(focus_on_mental_health))
 focus_mental_health
 
@@ -341,8 +336,9 @@ ggplot(focus_mental_health) +
   geom_bar(aes(x = age, y = count, fill = focus_on_mental_health), stat = "Identity", position = "fill")+
   scale_y_continuous(labels = scales::percent_format())
 
+##Focus finance
 focus_finance <- focus_area %>% group_by(age, focus_on_finance) %>% summarise(count = table(focus_on_finance))
-focus_physical_health
+focus_finance
 
 ggplot(focus_finance) +
   geom_bar(aes(x = age, y = count, fill = focus_on_finance), stat = "Identity", position = "fill") +
@@ -353,6 +349,7 @@ ggplot(focus_finance) +
 focus_income <- select(df2, income_per_month, focus_on_finance, focus_on_mental_health, focus_on_physical_health)
 focus_income
 
+##Mental health focus
 mental_focus_income_wise <- focus_income %>% group_by(income_per_month, focus_on_mental_health) %>% summarise(count = table(focus_on_mental_health))
 mental_focus_income_wise
 
@@ -360,6 +357,7 @@ ggplot(mental_focus_income_wise) +
   geom_bar(aes(x = income_per_month, y = count, fill = focus_on_mental_health), stat = "Identity", position = "fill") +
   scale_y_continuous(labels = scales::percent_format())
 
+##Physical health focus
 physical_focus_income_wise <- focus_income %>% group_by(income_per_month, focus_on_physical_health) %>% summarise(count = table(focus_on_physical_health))
 physical_focus_income_wise
 
@@ -367,6 +365,7 @@ ggplot(physical_focus_income_wise) +
   geom_bar(aes(x = income_per_month, y = count, fill = focus_on_physical_health), stat = "Identity", position = "fill") +
   scale_y_continuous(labels = scales::percent_format())
 
+##Finance focus
 finance_focus_income_wise <- focus_income %>% group_by(income_per_month, focus_on_finance) %>% summarise(count = table(focus_on_finance))
 finance_focus_income_wise
 
