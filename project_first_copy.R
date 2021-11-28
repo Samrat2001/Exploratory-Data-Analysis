@@ -108,7 +108,7 @@ df3$lockdown_effect_finance
 ggplot(data=df_age ,aes(x= age_grp,y= freqden ,fill= lockdown_effect_finance ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+coord_polar()
 labs(y="Count",x="Age group",title="Effect of Lockdown Financially",
-     fill= "Effect of lockdown Financially", subtitle = "Age wise",fill="Frequency density")
+     fill= "Effect of lockdown Financially", subtitle = "Age wise")
 
 
 #####################################
@@ -134,7 +134,7 @@ df_fin$freqden <- df_fin$count/df_fin$total
 ggplot(data=df_fin ,aes(x= income_per_month,y= freqden ,fill= lockdown_effect_finance ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
   labs(y="count",x="Income Group",title="Effect of Lockdown Financially",
-       fill= "Effect of lockdown Financially", subtitle = "income group wise",fill="Frequency density")
+       fill= "Effect of lockdown Financially", subtitle = "income group wise")
 
 
 #####################################################
@@ -161,7 +161,7 @@ df_fina$freqden <- df_fina$count/df_fina$total
 ggplot(data=df_fina ,aes(x= income_per_month,y= freqden ,fill= profession_change ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
   labs(y="count",x="Income Group",title="change of profession",
-       fill= "Change of Profession", subtitle = "income group wise",fill="Frequency density")
+       fill= "Change of Profession", subtitle = "income group wise")
           
           
           
@@ -189,7 +189,7 @@ df_finan$freqden <- df_finan$count/df_finan$total
 ggplot(data=df_finan ,aes(x= income_per_month,y= freqden ,fill= as.factor(covid_effect_on_work) ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
   labs(y="count",x="Income Group",title="change in worklife",
-       fill= "Change in worklife\n(not affected to very affected)", subtitle = "income group wise",fill="Frequency density")
+       fill= "Change in worklife\n(not affected to very affected)", subtitle = "income group wise")
 
 ###########################################################
 #focus of people in different income groups after lockdown
@@ -214,7 +214,7 @@ df_fin_focus$freqden <- df_fin_focus$count/df_fin_focus$total
 ggplot(data=df_fin_focus ,aes(x= income_per_month,y= freqden ,fill= focus_on_finance ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
   labs(y="count",x="Income Group",title="Focus on Finance after lockdown",
-       fill= "Focus on Finance", subtitle = "income group wise",fill="Frequency density")
+       fill= "Focus on Finance", subtitle = "income group wise")
 
 
 ############################################################
