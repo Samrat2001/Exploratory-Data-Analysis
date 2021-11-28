@@ -244,6 +244,7 @@ ggplot(data=df_covid1 ,aes(x= comorbidity,y= freqden ,fill= lockdown_effect_phys
   labs(y="count",x="Comorbidity",title="Effect of Covid on Physical Health",
        fill= "Effect of Covid on Physical Health", subtitle = "Covid Affected population")          
           
+##New change by kamal
 ##################################################################
 #people infected with covid vs change of profession
 
@@ -272,3 +273,160 @@ ggplot(data=df_covid2 ,aes(x= covid_affected,y= freqden ,fill= profession_change
   labs(y="count",x="covid infection",title="Effect of Covid on profession",
        fill= "change of profession")+
   theme(axis.text.x = element_text(angle = 90))
+
+          
+###############################################################################
+lckd$age <- cut(lckd$age,5)
+levels(lckd$age) <- c("(17,27]", "(27,36]", "(36,46]", "(46, 55]", "(55,65]")
+
+temp <- lckd[!is.na(lckd$age),]
+lckd_age_physically <- temp %>% group_by(age, lockdown_effect_physically) %>% summarise(count = table(lockdown_effect_physically))
+ggplot(lckd_age_physically)+
+  geom_bar(aes(x = age, y = count, fill = lockdown_effect_physically), stat = "Identity", position = "dodge")+
+  theme(axis.text.x = element_text(angle = 90))
+#geom_text(aes(x = Age., y = count, label = count), position = position_dodge(width = 0.9))
+
+lckd_age_financially <- temp %>% group_by(age, lockdown_effect_finance) %>% summarise(count = table(lockdown_effect_finance))
+ggplot(lckd_age_financially)+
+  geom_bar(aes(x = age, y = count, fill = lockdown_effect_finance), stat = "Identity", position = "dodge")+
+  theme(axis.text.x = element_text(angle = 90))
+
+lckd_age_mentally <- temp %>% group_by(age, lockdown_effect_mentally) %>% summarise(count = table(lockdown_effect_mentally))
+ggplot(lckd_age_mentally)+
+  geom_bar(aes(x = age, y = count, fill = lockdown_effect_mentally), stat = "Identity", position = "dodge")+
+  theme(axis.text.x = element_text(angle = 90))
+
+
+############################################################################
+##lockdown financial effect on different income group
+I1 <- select(df2, income_per_month, lockdown_effect_finance) 
+
+I1_ <- I1 %>% group_by(income_per_month, lockdown_effect_finance) %>% summarise(count = table(lockdown_effect_finance))
+
+ggplot(I1_) +
+  geom_bar(aes(x = income_per_month, y = count, fill = lockdown_effect_finance), stat = "Identity", position = "dodge")+
+  theme(axis.text.x = element_text(angle = 90))
+
+################################################################################
+table(df2$profession)
+
+Pf1 <- select(df2, profession, lockdown_effect_finance, lockdown_effect_physically, lockdown_effect_mentally)
+
+Pf1_ <- Pf1 %>% group_by(profession, lockdown_effect_mentally) %>% summarise(count = table(lockdown_effect_mentally))
+Pf1_
+
+ggplot(Pf1_) +
+  geom_bar(aes(x = profession, y = count, fill = lockdown_effect_mentally), stat = "Identity", position = "dodge")
+
+################################################################################
+focus_area <- select(df2, age, focus_on_physical_health, focus_on_mental_health, focus_on_finance)
+focus_area$age <- cut(focus_area$age,5)
+levels(focus_area$age) <- c("(17,27]", "(27,36]", "(36,46]", "(46, 55]", "(55,65]")
+
+focus_area <- focus_area[!is.na(focus_area$age),]
+
+focus_physical_health <- focus_area %>% group_by(age, focus_on_physical_health) %>% summarise(count = table(focus_on_physical_health))
+focus_physical_health
+
+percent_phy <- 
+
+ggplot(focus_physical_health) +
+  geom_bar(aes(x = age, y = count, fill = focus_on_physical_health), stat = "Identity", position = "fill") +
+  scale_y_continuous(labels = scales::percent_format())
+
+focus_mental_health <- focus_area %>% group_by(age, focus_on_mental_health) %>% summarise(count = table(focus_on_mental_health))
+focus_mental_health
+
+ggplot(focus_mental_health) +
+  geom_bar(aes(x = age, y = count, fill = focus_on_mental_health), stat = "Identity", position = "fill")+
+  scale_y_continuous(labels = scales::percent_format())
+
+focus_finance <- focus_area %>% group_by(age, focus_on_finance) %>% summarise(count = table(focus_on_finance))
+focus_physical_health
+
+ggplot(focus_finance) +
+  geom_bar(aes(x = age, y = count, fill = focus_on_finance), stat = "Identity", position = "fill") +
+  scale_y_continuous(labels = scales::percent_format())
+##################################################################################################
+
+##Focus_income_wise_post_covid
+focus_income <- select(df2, income_per_month, focus_on_finance, focus_on_mental_health, focus_on_physical_health)
+focus_income
+
+mental_focus_income_wise <- focus_income %>% group_by(income_per_month, focus_on_mental_health) %>% summarise(count = table(focus_on_mental_health))
+mental_focus_income_wise
+
+ggplot(mental_focus_income_wise) +
+  geom_bar(aes(x = income_per_month, y = count, fill = focus_on_mental_health), stat = "Identity", position = "fill") +
+  scale_y_continuous(labels = scales::percent_format())
+
+physical_focus_income_wise <- focus_income %>% group_by(income_per_month, focus_on_physical_health) %>% summarise(count = table(focus_on_physical_health))
+physical_focus_income_wise
+
+ggplot(physical_focus_income_wise) +
+  geom_bar(aes(x = income_per_month, y = count, fill = focus_on_physical_health), stat = "Identity", position = "fill") +
+  scale_y_continuous(labels = scales::percent_format())
+
+finance_focus_income_wise <- focus_income %>% group_by(income_per_month, focus_on_finance) %>% summarise(count = table(focus_on_finance))
+finance_focus_income_wise
+
+ggplot(finance_focus_income_wise) +
+  geom_bar(aes(x = income_per_month, y = count, fill = focus_on_finance), stat = "Identity", position = "fill") +
+  scale_y_continuous(labels = scales::percent_format())
+
+#################################################################################################################
+
+##vaccinated people vs traveling people
+Vaccinated_traveling_people <- select(df2, vaccinated_no_of_doses, traveling_freq_work, traveling_freq_emergency, traveling_freq_vacation)
+Vaccinated_traveling_people
+
+##People traveling for work
+work_traveling_people <- Vaccinated_traveling_people %>% group_by(vaccinated_no_of_doses, traveling_freq_work) %>% summarise(Vaccinated_vs_work_travel = table(traveling_freq_work))
+work_traveling_people                                                                                                                        
+
+ggplot(work_traveling_people) +
+  geom_bar(aes(x = vaccinated_no_of_doses, y = Vaccinated_vs_work_travel, fill = traveling_freq_work), stat = "Identity", position = "fill") +
+  scale_y_continuous(labels = scales::percent_format())
+
+##People traveling for emergency
+emergency_traveling_people <- Vaccinated_traveling_people %>% group_by(vaccinated_no_of_doses, traveling_freq_emergency) %>% summarise(Vaccinated_vs_emergency_travel = table(traveling_freq_emergency))
+emergency_traveling_people
+
+ggplot(emergency_traveling_people) +
+  geom_bar(aes(x = vaccinated_no_of_doses, y = Vaccinated_vs_emergency_travel, fill = traveling_freq_emergency), stat = "Identity", position = "fill") +
+  scale_y_continuous(labels = scales::percent_format())
+
+##People traveling for vacation
+vacation_traveling_people <- Vaccinated_traveling_people %>% group_by(vaccinated_no_of_doses, traveling_freq_vacation) %>% summarise(Vaccinated_vs_vacation_travel = table(traveling_freq_vacation))
+vacation_traveling_people
+
+ggplot(vacation_traveling_people) +
+  geom_bar(aes(x = vaccinated_no_of_doses, y = Vaccinated_vs_vacation_travel, fill = traveling_freq_vacation), stat = "Identity", position = "fill") +
+  scale_y_continuous(labels = scales::percent_format())
+
+##########################################################################################################################################################
+
+##People who dont exercise vs Their views on impact of exercise on mental health
+exercise_mental_health <- df2 %>% group_by(exercise_freq, view_on_exercise) %>% summarise(Exercise_vs_effect_on_mental_health = table(view_on_exercise))
+exercise_mental_health
+
+view_of_people_impact_of_exercise <- exercise_mental_health[exercise_mental_health$exercise_freq == "Not at all",]
+view_of_people_impact_of_exercise
+
+percent <- round(100*view_of_people_who_dont_exercise$Exercise_vs_effect_on_mental_health/sum(view_of_people_who_dont_exercise$Exercise_vs_effect_on_mental_health),1)
+percent <- paste0(percent, "%")
+
+pie(view_of_people_who_dont_exercise$Exercise_vs_effect_on_mental_health, percent, col = c("Red", "Green", "Blue"), main = "% of people who dont exercise at all")
+legend("topright", legend = c("May have an imapct", "doesnt have any impact", "yes it helps in mental health betterment"), cex = 0.8, fill = c("Red", "Green", "Blue"))
+
+####################################################################################################################
+
+##Vaccination vs Precautions people are taking
+Vaccination_precautions_taken <- df2 %>% group_by(vaccinated_no_of_doses, covid_precautions) %>% summarise(people_vaccinated_vs_precautions = table(covid_precautions))
+Vaccination_precautions_taken
+
+ggplot(Vaccination_precautions_taken) +
+  geom_bar(aes(x = vaccinated_no_of_doses, y = people_vaccinated_vs_precautions, fill = covid_precautions), stat = "Identity", position = "fill")+
+  scale_y_continuous(labels = scales::percent_format())+
+  theme(axis.text.x = element_text(angle = 90))
+          
