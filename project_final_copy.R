@@ -2,14 +2,13 @@ library(dplyr)
 library(stringr)
 library(ggplot2)
 
+######################################################
+#Reading Data
 df1 <- read.csv("data2.csv",as.is = c(1:5,18),na.strings = '')
-
+########################################################
+#Data cleaning
 
 df2 <- df1[-1]
-glimpse(df2)
-summary(df2)
-head(df2)
-apply(df2,2,table)
 
 vec1 <- c("age","gender","location","profession","income_per_month","covid_affected","vaccinated_no_of_doses",
           "lockdown_effect_finance","lockdown_effect_physically","lockdown_effect_mentally",
@@ -19,44 +18,28 @@ vec1 <- c("age","gender","location","profession","income_per_month","covid_affec
           "focus_on_mental_health","focus_on_finance")
 
 colnames(df2) <- vec1
-glimpse(df2)
+
 df2$age <- as.integer(df2$age)
 table(df2$age)
 
-
 df3 <- df2%>%
   mutate_at(c(3,4),tolower)
-glimpse(df3)
-mapply(levels,df3)
-
-
-
-levels(df3$vaccinated_no_of_doses) <- c(0,2,1)
-
-table(df3$location)
-table(df3$profession)
-glimpse(df3)
-table(df3$covid_affected)
-df3$covid_affected1 = df3$covid_affected
-levels(df3$covid_affected1) <- c(0,0,"undefined",1)
-df3$covid_affected1
-
-
-df3$profession1 <- df3$profession
-
-table(df3$profession1)
-
-
-summary(df3$age)
-df3$profession1[which(str_detect(df3$profession1,c("student|nursing|studying")))] = "student"
-df3$profession1[which(str_detect(df3$profession1,c("home|house|retired|retd|graduate|no")))] = "unemployed"
-df3$profession1[which(str_detect(df3$profession1,c("student|unemployed"),negate = T))] = "employed" 
-table(df3$profession1)
 
 df3 <- df3[complete.cases(df3$age),]
 df3$age_grp <- cut(df3$age,5)
 levels(df3$age_grp) <- c("(17,27]", "(27,36]", "(36,46]", "(46, 55]", "(55,65]")
-table(df3$age_grp)
+
+
+levels(df3$vaccinated_no_of_doses) <- c(0,2,1)
+
+df3$covid_affected1 = df3$covid_affected
+levels(df3$covid_affected1) <- c(0,0,"undefined",1)
+df3$profession1 <- df3$profession
+
+df3$profession1[which(str_detect(df3$profession1,c("student|nursing|studying")))] = "student"
+df3$profession1[which(str_detect(df3$profession1,c("home|house|retired|retd|graduate|no")))] = "unemployed"
+df3$profession1[which(str_detect(df3$profession1,c("student|unemployed"),negate = T))] = "employed" 
+
 df3$covid_precautions1 <- as.character(lapply(strsplit(c(df3$covid_precautions),";"),length))
 
 
@@ -68,26 +51,22 @@ age_count <- df3 %>%
   group_by(age_grp) %>% 
   summarise(count= n())
 
-age_count
 
 df_age <- df3 %>% 
   group_by(age_grp,profession_change) %>% 
   summarise(count = n())
-df_age
 
 tab <- data.frame(table(df_age$age_grp))
-tab
 
 df_age$total <- rep(age_count$count,times=tab$Freq)
 df_age$freqden <- df_age$count/df_age$total
-names(df3)
-df3$lockdown_effect_finance
+
 
 
 ggplot(data=df_age ,aes(x= age_grp,y= freqden ,fill= profession_change ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-labs(y="Count",x="Age group",title="Effect on profession due to Lockdown",
-     fill= "Change of Profession", subtitle = "Age wise")+
+  labs(y="Count",x="Age group\nFigure 1.1",title="Effect on profession due to Lockdown",
+       fill= "Change of Profession", subtitle = "Age wise")+
   scale_y_continuous(labels = scales::percent_format())
 
 
@@ -113,7 +92,7 @@ df_fin$freqden <- df_fin$count/df_fin$total
 
 ggplot(data=df_fin ,aes(x= income_per_month,y= freqden ,fill = lockdown_effect_finance ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="count",x="Income Group",title="Effect of lockdown on Financial Condition",
+  labs(y="count",x="Income Group\nFigure 1.2",title="Effect of lockdown on Financial Condition",
        fill= "Effect of lockdown Financially", subtitle = "income group wise")+
   scale_y_continuous(labels = scales::percent_format())
 
@@ -141,7 +120,7 @@ df_fina$freqden <- df_fina$count/df_fina$total
 
 ggplot(data=df_fina ,aes(x= income_per_month,y= freqden ,fill= profession_change ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="count",x="Income Group",title="change of profession",
+  labs(y="count",x="Income Group\nFigure 1.3",title="change of profession",
        fill= "Change of profession", subtitle = "income group wise")+
   scale_y_continuous(labels = scales::percent_format())
 
@@ -167,7 +146,7 @@ df_finan$freqden <- df_finan$count/df_finan$total
 
 ggplot(data=df_finan ,aes(x= income_per_month,y= freqden ,fill= as.factor(covid_effect_on_work) ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="count",x="Income Group",title="change in worklife",
+  labs(y="count",x="Income Group\nFigure 1.4",title="change in worklife",
        fill= "Change in worklife\n(not affected to very affected)",
        subtitle = "income group wise")+
   scale_y_continuous(labels = scales::percent_format())
@@ -194,7 +173,7 @@ df_fin_focus$freqden <- df_fin_focus$count/df_fin_focus$total
 
 ggplot(data=df_fin_focus ,aes(x= income_per_month,y= freqden ,fill= focus_on_finance ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="count",x="Income Group",title="Focus on Finance after lockdown",
+  labs(y="count",x="Income Group\nFigure 1.5",title="Focus on Finance after lockdown",
        fill= "Focus on Finance", subtitle = "income group wise")+
   scale_y_continuous(labels = scales::percent_format())
 
@@ -223,8 +202,8 @@ df_covid1$freqden <- df_covid1$count/df_covid1$total
 
 ggplot(data=df_covid1 ,aes(x= comorbidity,y= freqden ,fill= lockdown_effect_physically ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="count",x="Comorbidity",title="Effect of Covid on Physical Health",
-       fill= "Effect of Covid on Physical Health", subtitle = "Covid Affected population")+
+  labs(y="count",x="Comorbidity\nFigure 1.6",title="Effect of Covid on Physical Health",
+       fill= "Effect of Covid on Physical Health", subtitle = "Covid Infected population")+
   scale_y_continuous(labels = scales::percent_format())
 
 
@@ -254,7 +233,7 @@ df_covid2$freqden <- df_covid2$count/df_covid2$total
 
 ggplot(data=df_covid2 ,aes(x= covid_affected,y= freqden ,fill= profession_change ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="count",x="covid infection",title="Effect of Covid on profession",
+  labs(y="count",x="covid infection\nFigure 1.7",title="Effect of Covid on profession",
        fill= "change of profession")+
   scale_y_continuous(labels = scales::percent_format())
 
@@ -279,7 +258,7 @@ df_vac_travel$freqden1 <- df_vac_travel$count/df_vac_travel$total
 
 ggplot(data=df_vac_travel ,aes(x=vaccinated_no_of_doses ,y= freqden1 ,fill= traveling_freq_vacation ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="count",x="No of Doses",title="vaccinated population going out for vacation",
+  labs(y="count",x="No of Doses\nFigure 1.8",title="vaccinated population going out for vacation",
        fill= "going out for vacation", subtitle = "vaccination dose count wise")+
   scale_y_continuous(labels = scales::percent_format())
 
@@ -304,38 +283,44 @@ df_vac_prec$freqden1 <- df_vac_prec$count/df_vac_prec$total
 
 ggplot(data=df_vac_prec ,aes(x=vaccinated_no_of_doses ,y= freqden1 ,fill= as.factor(covid_precautions1 )))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="count",x="No of Doses",title="vaccinated population going out for vacation",
+  labs(y="count",x="No of Doses\nFigure 1.9",title="vaccinated population going out for vacation",
        fill= "following no of precautions", subtitle = "vaccination dose count wise")+
   scale_y_continuous(labels = scales::percent_format())
-
 ####################################################################
 ### focus of people on different factors after covid age wise
-
+####################################
 ##Focus physical health
 
 focus_area <- select(df3, age_grp, focus_on_physical_health, focus_on_mental_health, focus_on_finance)
 focus_area <- focus_area[!is.na(focus_area$age),]
 
 
-focus_physical_health <- focus_area %>% group_by(age_grp, focus_on_physical_health) %>% summarise(count = table(focus_on_physical_health))
+focus_physical_health <- focus_area %>%
+  group_by(age_grp, focus_on_physical_health) %>%
+  summarise(count = table(focus_on_physical_health))
 focus_physical_health
 
 ggplot(focus_physical_health) +
   geom_bar(aes(x = age_grp, y = count, fill = focus_on_physical_health),
-           stat = "Identity", position = "fill",width = 0.6) +
+           stat = "Identity", position = "fill",width = 0.6) + 
+  labs(y="percentage",x="Age Group\nFigure 1.10",title="Focus on Physical Health During Covid",
+          fill= "Focus on Physical Health", subtitle = "Age group Wise")+
   scale_y_continuous(labels = scales::percent_format())
 
 
 
-
+##########################################
 ##Focus Mental health
-focus_mental_health <- focus_area %>% group_by(age_grp, focus_on_mental_health) %>% summarise(count = table(focus_on_mental_health))
+focus_mental_health <- focus_area %>%
+  group_by(age_grp, focus_on_mental_health) %>%
+  summarise(count = table(focus_on_mental_health))
 
 ggplot(focus_mental_health) +
   geom_bar(aes(x = age_grp, y = count, fill = focus_on_mental_health), 
-           stat = "Identity", position = "fill",width = 0.7)+
+           stat = "Identity", position = "fill",width = 0.7)+ 
+  labs(y="percentage",x="Age Group\nFigure 1.11",title="Focus on Mental Health During Covid",
+       fill= "Focus on Mental Health", subtitle = "Age group Wise")+
   scale_y_continuous(labels = scales::percent_format())
-
 ##########################################################
 #covid infection vs taking precautions
 
@@ -357,7 +342,7 @@ df_aff_prec$freqden1 <- df_aff_prec$count/df_aff_prec$total
 
 ggplot(data=df_aff_prec ,aes(x=covid_affected1 ,y= freqden1 ,fill= as.factor(covid_precautions1 )))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="Percentage",x="covid infection",title="Taking precautions vs covid infection",
+  labs(y="Percentage",x="covid infection\nFigure 1.12",title="Taking precautions vs covid infection",
        fill= "following no of precautions")+
   scale_y_continuous(labels = scales::percent_format())
 
@@ -383,7 +368,7 @@ df_traW_prec$freqden1 <- df_traW_prec$count/df_traW_prec$total
 
 ggplot(data=df_traW_prec ,aes(x=traveling_freq_work ,y= freqden1 ,fill= as.factor(covid_precautions1 )))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="Percentage",x="Frequency of Traveling for work",title="Taking Precautions While going out for Work",
+  labs(y="Percentage",x="Frequency of Traveling for work\nFigure 1.13",title="Taking Precautions While going out for Work",
        fill= "following no of precautions")+
   scale_y_continuous(labels = scales::percent_format())
 
@@ -394,7 +379,7 @@ ggplot(data=df_traW_prec ,aes(x=traveling_freq_work ,y= freqden1 ,fill= as.facto
 
 df_vac_2 <- select(df3,traveling_freq_vacation,covid_precautions1)
 df_vac_2 <- df_vac_2[complete.cases(df_vac_2),]
-df_vac_2
+
 grp_count <- df_vac_2 %>% 
   group_by(traveling_freq_vacation) %>% 
   summarise(count= n())
@@ -412,7 +397,7 @@ df_traV_prec$freqden1 <- df_traV_prec$count/df_traV_prec$total
 
 ggplot(data=df_traV_prec ,aes(x=traveling_freq_vacation ,y= freqden1 ,fill= as.factor(covid_precautions1 )))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="Percentage",x="Frequency of Traveling for vacation",title="Taking Precautions While going out for vacation",
+  labs(y="Percentage",x="Frequency of Traveling for vacation\nFigure 1.14",title="Taking Precautions While going out for vacation",
        fill= "following no of precautions")+
   scale_y_continuous(labels = scales::percent_format())
 
@@ -422,7 +407,7 @@ ggplot(data=df_traV_prec ,aes(x=traveling_freq_vacation ,y= freqden1 ,fill= as.f
 
 df_vac_3 <- select(df3,traveling_freq_emergency,covid_precautions1)
 df_vac_3 <- df_vac_3[complete.cases(df_vac_3),]
-df_vac_3
+
 grp_count <- df_vac_3 %>% 
   group_by(traveling_freq_emergency) %>% 
   summarise(count= n())
@@ -438,7 +423,7 @@ df_traE_prec$freqden1 <- df_traE_prec$count/df_traE_prec$total
 
 ggplot(data=df_traE_prec ,aes(x=traveling_freq_emergency ,y= freqden1 ,fill= as.factor(covid_precautions1 )))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="Percentage",x="Frequency of traveling for emergency",title="Taking Precautions While going out for emergency",
+  labs(y="Percentage",x="Frequency of traveling for emergency\nFigure 1.15",title="Taking Precautions While going out for emergency",
        fill= "following no of precautions")+
   scale_y_continuous(labels = scales::percent_format())
 
@@ -449,12 +434,11 @@ age_count1 <- df3 %>%
   group_by(age_grp) %>% 
   summarise(count= n())
 
-age_count1
 
 df_age1 <- df3 %>% 
   group_by(age_grp,exercise_freq) %>% 
   summarise(count = n())
-head(df_age1)
+
 
 tab13 <- data.frame(table(df_age1$age_grp))
 
@@ -466,7 +450,7 @@ df_age1$freqden <- df_age1$count/df_age1$total
 
 ggplot(data=df_age1 ,aes(x= age_grp,y= freqden ,fill= exercise_freq ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="Count",x="Age group",title="Exercise Frequency in different Age group",
+  labs(y="Count",x="Age group\nFigure 1.16",title="Exercise Frequency in different Age group",
        fill= "Exercise Frequency", subtitle = "Age wise")+
   scale_y_continuous(labels = scales::percent_format())
 
@@ -483,44 +467,44 @@ df_age2 <- df3 %>%
   summarise(count = n())
 
 
-tab7 <- data.frame(table(df_age2$age_grp))
+tab14 <- data.frame(table(df_age2$age_grp))
 
 
-df_age2$total <- rep(age_count2$count,times=tab7$Freq)
+df_age2$total <- rep(age_count2$count,times=tab14$Freq)
 df_age2$freqden <- df_age2$count/df_age2$total
 
 
 ggplot(data=df_age2 ,aes(x= age_grp,y= freqden ,fill= lockdown_effect_physically ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="Count",x="Age group",title="Effect on Physical Health due to Lockdown",
+  labs(y="Count",x="Age group\nFigure 1.17",title="Effect on Physical Health due to Lockdown",
        fill= "Effect on physical health", subtitle = "Age wise")+
   scale_y_continuous(labels = scales::percent_format())
 
 #################################################################
 #age-wise mentally affected by lockdown
-names(df3)
+
 age_count3 <- df3 %>% 
   group_by(age_grp) %>% 
   summarise(count= n())
 
-age_count3
+
 
 df_age3 <- df3 %>% 
   group_by(age_grp,lockdown_effect_mentally) %>% 
   summarise(count = n())
-head(df_age3)
-
-tab8 <- data.frame(table(df_age3$age_grp))
 
 
-df_age3$total <- rep(age_count3$count,times=tab8$Freq)
+tab15 <- data.frame(table(df_age3$age_grp))
+
+
+df_age3$total <- rep(age_count3$count,times=tab15$Freq)
 df_age3$freqden <- df_age3$count/df_age3$total
 
 
 
 ggplot(data=df_age3 ,aes(x= age_grp,y= freqden ,fill= lockdown_effect_mentally ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="Count",x="Age group",title="Effect on Mental Health due to Lockdown",
+  labs(y="Count",x="Age group\nFigure 1.18",title="Effect on Mental Health due to Lockdown",
        fill= "Effect on Mental health", subtitle = "Age wise")+
   scale_y_continuous(labels = scales::percent_format())
 
@@ -537,17 +521,17 @@ df_prof <- df3 %>%
   group_by(profession_change,lockdown_effect_mentally) %>% 
   summarise(count = n())
 
-tab9 <- data.frame(table(df_prof$profession_change))
+tab16 <- data.frame(table(df_prof$profession_change))
 
 
-df_prof$total <- rep(prof_count$count,times=tab9$Freq)
+df_prof$total <- rep(prof_count$count,times=tab16$Freq)
 df_prof$freqden <- df_prof$count/df_prof$total
 
 
 
 ggplot(data=df_prof ,aes(x= profession_change,y= freqden ,fill= lockdown_effect_mentally ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="Count",x="Age group",title="Effect on Mental Health due to Lockdown",
+  labs(y="percentage",x="Change of Profession\nFigure 1.19",title="Effect on Mental Health due to Change of profession",
        fill= "Effect on Mental health")+
   scale_y_continuous(labels = scales::percent_format())
 
@@ -555,29 +539,29 @@ ggplot(data=df_prof ,aes(x= profession_change,y= freqden ,fill= lockdown_effect_
 #################################################################
 #age-wise financally affected by change of profession
 
-names(df3)
+
 prof_count1 <- df3 %>% 
   group_by(profession_change) %>% 
   summarise(count= n())
 
-prof_count1
 
 df_prof1 <- df3 %>% 
   group_by(profession_change,lockdown_effect_finance) %>% 
   summarise(count = n())
-head(df_prof1)
-
-tab10 <- data.frame(table(df_prof1$profession_change))
 
 
-df_prof1$total <- rep(prof_count1$count,times=tab10$Freq)
+tab17 <- data.frame(table(df_prof1$profession_change))
+
+
+df_prof1$total <- rep(prof_count1$count,times=tab17$Freq)
 df_prof1$freqden <- df_prof1$count/df_prof1$total
 
 
 
 ggplot(data=df_prof1 ,aes(x= profession_change,y= freqden ,fill= lockdown_effect_finance ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="Count",x="Age group",title="Effect on Financial condition due to Profession change",
+  labs(y="percentage",x="Change of profession\nFigure 1.20",title="Effect on Financial condition due to Profession change",
        fill= "Effect on Financial Condition")+
   scale_y_continuous(labels = scales::percent_format())
+
 
