@@ -563,3 +563,17 @@ ggplot(data=df_prof1 ,aes(x= profession_change,y= freqden ,fill= lockdown_effect
        fill= "Effect on Financial Condition")+
   scale_y_continuous(labels = scales::percent_format())
 
+##########################################################################################################################################################
+
+##People who dont exercise vs Their views on impact of exercise on mental health
+exercise_mental_health <- df2 %>% group_by(exercise_freq, view_on_exercise) %>% summarise(Exercise_vs_effect_on_mental_health = table(view_on_exercise))
+exercise_mental_health
+
+view_of_people_who_dont_exercise <- exercise_mental_health[exercise_mental_health$exercise_freq == "Not at all",]
+view_of_people_who_dont_exercise
+
+percent <- round(100*view_of_people_who_dont_exercise$Exercise_vs_effect_on_mental_health/sum(view_of_people_who_dont_exercise$Exercise_vs_effect_on_mental_health),1)
+percent <- paste0(percent, "%")
+
+pie(view_of_people_who_dont_exercise$Exercise_vs_effect_on_mental_health, percent, col = c("Red", "Green", "Blue"), main = "% of people who dont exercise at all and their views on impact of exercise on mental health")
+legend("topright", legend = c("May have an imapct", "doesnt have any impact", "yes it helps in mental health betterment"), cex = 0.8, fill = c("Red", "Green", "Blue"))
