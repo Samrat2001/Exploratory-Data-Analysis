@@ -205,8 +205,7 @@ ggplot(data=df_covid1 ,aes(x= comorbidity,y= freqden ,fill= lockdown_effect_phys
        fill= "Effect of Covid on Physical Health", subtitle = "Covid Infected population")+
   scale_y_continuous(labels = scales::percent_format())
 
-#####################################################################
-########################### NEED EDITING 
+
 ##################################################################
 #people infected with covid vs change of profession
 
@@ -223,6 +222,10 @@ df_covid2 <- df_covidp %>%
   group_by(covid_affected,profession_change) %>% 
   summarise(count = n())
 
+levels(df_covid2$covid_affected) <- c("No I never had \n symptoms of covid"                        
+                                      ,"No, I had covid related symptoms \n  but was tested negative"
+                                      ,"No, I had symptoms of covid \n but never tested"            
+                                      ,"Yes, I had symptoms \n and was detected positive" )
 
 tab6 <- data.frame(table(df_covid2$covid_affected))
 
