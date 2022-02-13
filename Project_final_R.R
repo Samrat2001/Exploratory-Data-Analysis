@@ -594,11 +594,6 @@ PD2 <- df3 %>% group_by(age_grp, profession_change) %>%
 PieDonut(PD2, aes(age_grp, profession_change),
          title = "Age group and Profession Change")
 
-###########################################################
-
-PieDonut(df3, aes(covid_affected1),
-         title = "% of people affected with covid")
-
 ###############################################################
 
 df12 <- as.data.frame(df3$income_per_month)
