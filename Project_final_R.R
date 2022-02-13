@@ -4,7 +4,7 @@ library(ggplot2)
 
 ######################################################
 #Reading Data
-df1 <- read.csv("Project_survey.csv",as.is = c(1:5,18),na.strings = '')
+df1 <- read.csv("Data2.csv",as.is = c(1:5,18),na.strings = '')
 ########################################################
 #Data cleaning
 
