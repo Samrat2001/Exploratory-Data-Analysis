@@ -173,7 +173,7 @@ df_fin_focus$freqden <- df_fin_focus$count/df_fin_focus$total
 
 ggplot(data=df_fin_focus ,aes(x= income_per_month,y= freqden ,fill= focus_on_finance ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="count",x="Income Group\nFigure 1.5",title="Focus on Finance during Covid",
+  labs(y="Percentage",x="Income Group\nFigure 1.5",title="Focus on Finance during Covid",
        fill= "Focus on Finance", subtitle = "income group wise")+
   scale_y_continuous(labels = scales::percent_format())
 
@@ -202,7 +202,7 @@ df_covid1$freqden <- df_covid1$count/df_covid1$total
 
 ggplot(data=df_covid1 ,aes(x= comorbidity,y= freqden ,fill= lockdown_effect_physically ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="count",x="Comorbidity\nFigure 1.6",title="Effect of Covid on Physical Health",
+  labs(y="Percentage",x="Comorbidity\nFigure 1.6",title="Effect of Covid on Physical Health",
        fill= "Effect of Covid on Physical Health", subtitle = "Covid Infected population")+
   scale_y_continuous(labels = scales::percent_format())
 
@@ -236,7 +236,7 @@ df_covid2$freqden <- df_covid2$count/df_covid2$total
 
 ggplot(data=df_covid2 ,aes(x= covid_affected,y= freqden ,fill= profession_change ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="count",x="covid infection\nFigure 1.7",title="Effect of Covid on profession",
+  labs(y="Percentage",x="covid infection\nFigure 1.7",title="Effect of Covid on profession",
        fill= "change of profession")+
   scale_y_continuous(labels = scales::percent_format())
 
@@ -261,7 +261,7 @@ df_vac_travel$freqden1 <- df_vac_travel$count/df_vac_travel$total
 
 ggplot(data=df_vac_travel ,aes(x=vaccinated_no_of_doses ,y= freqden1 ,fill= traveling_freq_vacation ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="count",x="No of Doses\nFigure 1.8",title="vaccinated population going out for vacation",
+  labs(y="Percentage",x="No of Doses\nFigure 1.8",title="vaccinated population going out for vacation",
        fill= "going out for vacation", subtitle = "vaccination dose count wise")+
   scale_y_continuous(labels = scales::percent_format())
 
@@ -286,7 +286,7 @@ df_vac_prec$freqden1 <- df_vac_prec$count/df_vac_prec$total
 
 ggplot(data=df_vac_prec ,aes(x=vaccinated_no_of_doses ,y= freqden1 ,fill= as.factor(covid_precautions1 )))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="count",x="No of Doses\nFigure 1.9",title="vaccinated population going out for vacation",
+  labs(y="Percentage",x="No of Doses\nFigure 1.9",title="vaccinated population going out for vacation",
        fill= "following no of precautions", subtitle = "vaccination dose count wise")+
   scale_y_continuous(labels = scales::percent_format())
 ####################################################################
@@ -453,7 +453,7 @@ df_age1$freqden <- df_age1$count/df_age1$total
 
 ggplot(data=df_age1 ,aes(x= age_grp,y= freqden ,fill= exercise_freq ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="Count",x="Age group\nFigure 1.16",title="Exercise Frequency in different Age group",
+  labs(y="Percentage",x="Age group\nFigure 1.16",title="Exercise Frequency in different Age group",
        fill= "Exercise Frequency", subtitle = "Age wise")+
   scale_y_continuous(labels = scales::percent_format())
 
@@ -479,7 +479,7 @@ df_age2$freqden <- df_age2$count/df_age2$total
 
 ggplot(data=df_age2 ,aes(x= age_grp,y= freqden ,fill= lockdown_effect_physically ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="Count",x="Age group\nFigure 1.17",title="Effect on Physical Health due to Lockdown",
+  labs(y="Percentage",x="Age group\nFigure 1.17",title="Effect on Physical Health due to Lockdown",
        fill= "Effect on physical health", subtitle = "Age wise")+
   scale_y_continuous(labels = scales::percent_format())
 
@@ -507,7 +507,7 @@ df_age3$freqden <- df_age3$count/df_age3$total
 
 ggplot(data=df_age3 ,aes(x= age_grp,y= freqden ,fill= lockdown_effect_mentally ))+
   geom_bar(position="dodge",stat="identity",width =0.5)+
-  labs(y="Count",x="Age group\nFigure 1.18",title="Effect on Mental Health due to Lockdown",
+  labs(y="Percentage",x="Age group\nFigure 1.18",title="Effect on Mental Health due to Lockdown",
        fill= "Effect on Mental health", subtitle = "Age wise")+
   scale_y_continuous(labels = scales::percent_format())
 
@@ -607,8 +607,10 @@ colnames(df12) <- c("Income_Groups")
 df13 <- data.frame(table(df12$Income_Groups))
 df13
 
-pie(df13$Freq, labels = df13$Var1, col = rainbow(6),
+pie(df13$Freq, labels = c("17.1%", "15.3%", "10%", "14.9%", "20.8%", "21.8%"), col = rainbow(6),
     main = "Income Distribution")
+legend("topright", legend = df13$Var1,
+       cex = 0.75, fill = rainbow(length(df13$Freq)))
 
 #############################################################
 
@@ -637,3 +639,16 @@ pie3D(df18$Freq, labels = c("3.5%", "87.6%", "1.5%", "7.4%"),
       main = "Profession Change")
 legend("topright", legend = df18$Var1,
        cex = 0.75, fill = rainbow(length(df18$Var1)))
+#################################################################
+
+df20 <- as.data.frame(df3$gender)
+colnames(df20) <- c("Gender")
+
+df22 <- data.frame(table(df20$Gender))
+df22
+
+pie3D(df22$Freq, labels = c("39%", "60%", "1%"), col = rainbow(6),
+    main = "Gender Distribution")
+legend("topright", legend = df22$Var1,
+       cex = 0.75, fill = rainbow(length(df22$Freq)))
+
