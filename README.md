@@ -1,2 +1,3 @@
-# pds_group_project
-we were studying how much people are affected in health issues and financial issues by EDA
+# Exploratory Data Analysis
+How Covid and Lockdown Affected People in their lives?
+We all know Covid waves were very Impactful in Everyone's lives but whether it is good or bad and prople in different age group or people in different income group are reacting on those impacts.This work is trying to provide those answers via data visualisation
